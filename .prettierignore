@@ -1,0 +1,10 @@
+# .prettierignore
+node_modules
+.next
+out
+build
+coverage
+public
+.husky
+.agents
+pnpm-lock.yaml
