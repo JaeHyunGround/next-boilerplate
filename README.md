@@ -9,19 +9,17 @@
 1. [기술 스택](#기술-스택)
 2. [시작하기](#시작하기)
 3. [프로젝트 구조](#프로젝트-구조)
-4. [아키텍처 결정](#아키텍처-결정)
-5. [예제 코드](#예제-코드)
-6. [스크립트](#스크립트)
-7. [테스트](#테스트)
-8. [Storybook & 시각적 테스트](#storybook--시각적-테스트)
-9. [코드 품질](#코드-품질)
-10. [CI/CD](#cicd)
-11. [에러 모니터링 (Sentry)](#에러-모니터링-sentry)
-12. [환경변수](#환경변수)
-13. [새 기능 추가 가이드](#새-기능-추가-가이드)
-14. [배포](#배포)
-15. [트러블슈팅](#트러블슈팅)
-16. [라이선스](#라이선스)
+4. [스크립트](#스크립트)
+5. [테스트](#테스트)
+6. [Storybook & 시각적 테스트](#storybook--시각적-테스트)
+7. [코드 품질](#코드-품질)
+8. [CI/CD](#cicd)
+9. [에러 모니터링 (Sentry)](#에러-모니터링-sentry)
+10. [환경변수](#환경변수)
+11. [새 기능 추가 가이드](#새-기능-추가-가이드)
+12. [배포](#배포)
+13. [트러블슈팅](#트러블슈팅)
+14. [라이선스](#라이선스)
 
 <br />
 
@@ -126,122 +124,6 @@ e2e/                            # Playwright E2E 테스트
 .storybook/                     # Storybook 설정
 .github/workflows/              # GitHub Actions CI/CD
 .vscode/                        # 에디터 설정 & 추천 확장
-```
-
-<br />
-
-## 아키텍처 결정
-
-### 왜 TanStack Query + Zustand인가?
-
-서버 상태와 클라이언트 상태를 명확히 분리한다.
-
-- **TanStack Query**: API 응답 캐싱, 자동 refetch, 무한 스크롤 등 서버 상태 관리
-- **Zustand**: UI 상태, 폼 상태 등 클라이언트 전용 상태 관리
-
-두 도구를 조합하면 Redux 같은 단일 스토어 대비 보일러플레이트 코드가 적고, 각 도구가 가장 잘하는 영역에 집중할 수 있다.
-
-### 왜 Vitest인가?
-
-- Vite 기반으로 빠른 실행 속도
-- Storybook의 Vitest addon과 네이티브 통합 (스토리를 테스트로 재사용)
-- ESM 지원이 Jest보다 안정적
-
-### 왜 MSW인가?
-
-- 네트워크 레벨에서 API를 가로채므로 fetch/axios 등 구현에 비의존적
-- 동일한 핸들러를 Vitest 단위 테스트와 Storybook 스토리에서 공유 가능
-- Service Worker 기반이므로 브라우저 DevTools Network 탭에서 모킹된 요청 확인 가능
-
-### 왜 Storybook + Chromatic인가?
-
-- 컴포넌트를 독립 환경에서 개발하고 시각적으로 문서화
-- Chromatic이 PR마다 시각적 변경을 자동 감지하여 의도하지 않은 UI 변경 방지
-- Storybook Vitest addon으로 스토리가 곧 테스트가 됨 (별도 테스트 작성 불필요)
-
-<br />
-
-## 예제 코드
-
-보일러플레이트에 포함된 예제들로, 실제 프로젝트에서의 사용 패턴을 보여준다.
-
-### Zustand 스토어 (`src/stores/ui-store.ts`)
-
-```ts
-import { create } from 'zustand';
-
-interface UIState {
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
-  setSidebarOpen: (open: boolean) => void;
-}
-
-export const useUIStore = create<UIState>()((set) => ({
-  sidebarOpen: false,
-  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-  setSidebarOpen: (open) => set({ sidebarOpen: open }),
-}));
-```
-
-### TanStack Query 훅 (`src/hooks/use-examples-query.ts`)
-
-```ts
-// queryKey 팩토리 패턴
-export const exampleKeys = {
-  all: ['examples'] as const,
-  detail: (id: number) => ['examples', id] as const,
-};
-
-// 조회 훅
-export function useExamplesQuery() {
-  return useQuery<Example[]>({
-    queryKey: exampleKeys.all,
-    queryFn: async () => {
-      const res = await fetch('/api/examples');
-      if (!res.ok) throw new Error('Failed to fetch examples');
-      return res.json();
-    },
-  });
-}
-
-// 생성 뮤테이션 (캐시 자동 무효화 포함)
-export function useCreateExampleMutation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (input: CreateExampleInput) => {
-      /* ... */
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exampleKeys.all });
-    },
-  });
-}
-```
-
-### Zod 스키마 검증 (`src/lib/validations/example.ts`)
-
-```ts
-import { z } from 'zod';
-
-export const createExampleSchema = z.object({
-  title: z.string().min(1, '제목을 입력해주세요').max(100),
-  description: z.string().optional(),
-  status: z.enum(['draft', 'published', 'archived']),
-});
-
-export type CreateExampleInput = z.infer<typeof createExampleSchema>;
-```
-
-### API Route Handler (`src/app/api/examples/route.ts`)
-
-```ts
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  return NextResponse.json([
-    { id: 1, title: 'Example 1', status: 'published' },
-  ]);
-}
 ```
 
 <br />
