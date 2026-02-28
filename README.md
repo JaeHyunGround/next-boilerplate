@@ -343,6 +343,7 @@ src/components/Button/
 ### Chromatic (시각적 회귀 테스트)
 
 - `main` push 및 모든 PR에서 자동 실행 (`.github/workflows/chromatic.yml`)
+- `CHROMATIC_PROJECT_TOKEN`이 설정되어 있을 때만 실행 (미설정 시 자동 skip)
 - `main` 브랜치의 변경은 자동 승인 (`autoAcceptChanges`)
 - PR에서 시각적 변경이 감지되면 Chromatic UI에서 리뷰 후 승인/거부
 

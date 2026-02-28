@@ -177,6 +177,8 @@ pnpm chromatic
 
 Chromatic 대시보드에서 Storybook 스냅샷이 업로드되었는지 확인한다.
 
+> Chromatic CI 워크플로우는 `CHROMATIC_PROJECT_TOKEN`이 설정되어 있을 때만 실행된다. 토큰이 없으면 자동으로 skip되므로, Chromatic을 사용하지 않는 프로젝트에서는 별도 조치 없이 그대로 두면 된다.
+
 <br />
 
 ## 5. GitHub Repository 설정
