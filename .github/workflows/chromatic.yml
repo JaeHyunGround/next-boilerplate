@@ -8,17 +8,23 @@ on:
 
 jobs:
   chromatic:
-    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
         with:
           node-version: 22
       - uses: pnpm/action-setup@v4
-      - run: pnpm install --frozen-lockfile
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
+      - if: env.CHROMATIC_PROJECT_TOKEN != ''
+        run: pnpm install --frozen-lockfile
       - uses: chromaui/action@latest
+        if: env.CHROMATIC_PROJECT_TOKEN != ''
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          projectToken: ${{ env.CHROMATIC_PROJECT_TOKEN }}
