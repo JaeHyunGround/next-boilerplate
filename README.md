@@ -51,7 +51,7 @@
 
 ### Prerequisites
 
-- Node.js 20+ (`.nvmrc` 포함)
+- Node.js 22+ (`.nvmrc` 포함)
 - [pnpm](https://pnpm.io/) 10+
 
 ### 설치 & 실행
@@ -501,7 +501,7 @@ Vercel 대시보드에서 환경변수를 설정한다:
 ### Docker
 
 ```dockerfile
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
 
 FROM base AS deps
