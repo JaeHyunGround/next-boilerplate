@@ -77,6 +77,8 @@ pnpm dev
 
 > Sentry DSN 없이도 개발 서버는 정상 실행됩니다.
 
+> 새 프로젝트 세팅 시 [Setup Guide](./docs/setup-guide.md)를 참고하세요.
+
 ### VSCode 설정
 
 `.vscode/` 디렉토리에 에디터 설정과 추천 확장이 포함되어 있다. 팝업이 뜨면 **Install All**을 선택하면 된다.
